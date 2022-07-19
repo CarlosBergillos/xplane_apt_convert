@@ -4,18 +4,20 @@ Convert X-Plane airport data to GIS-friendly formats like GeoJSON or ESRI Shapef
 
 ![CLI help](./images/example_LEBL.png)
 
+**Note:** It has only been tested with `apt.dat` files with version 1100.
+
 ## Supported Output Formats
 
-| Format                     | Extension |
-| :------------------------- | :-------- |
-| ESRI Shapefile             | .shp      |
-| FlatGeobuf                 | .fgb      |
-| GeoJSON                    | .geojson  |
-| GeoJSON lines (GeoJSONSeq) | .geojsonl |
-| GeoPackage (GPKG)          | .gpkg     |
-| GML                        | .gml      |
-| OGR_GMT                    | .gmt      |
-| SQLite                     | .sqlite   |
+| Format                     | Extension   |
+| :------------------------- | :---------- |
+| ESRI Shapefile             | `.shp`      |
+| FlatGeobuf                 | `.fgb`      |
+| GeoJSON                    | `.geojson`  |
+| GeoJSON lines (GeoJSONSeq) | `.geojsonl` |
+| GeoPackage (GPKG)          | `.gpkg`     |
+| GML                        | `.gml`      |
+| OGR_GMT                    | `.gmt`      |
+| SQLite                     | `.sqlite`   |
 
 
 ## Supported Features
@@ -53,6 +55,8 @@ python -m xplane_apt_convert -a LEBL,LEGE,LERS,LELL -g -o ./out/ -d GeoJSON
 
 Other output file formats are available using the `-d` option, for example `GeoJSON`, `ESRI Shapefile`, or `GPKG`.
 
+For information about all available options run the command using `--help`.
+
 ![CLI help](./images/cli_help.svg)
 
 
@@ -65,6 +69,8 @@ from xplane_airports.AptDat import AptDat
 
 with open(input_file, "r") as f:
     apt_dat = AptDat.from_file_text(f.read(), input_file)
+
+apt = apt_dat.search_by_id(airport_id)
 
 p_apt = ParsedAirport(apt)
 p_apt.export("./aiport.geojson"")
