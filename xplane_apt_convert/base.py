@@ -127,7 +127,7 @@ class ParsedAirport:
 
     def __init__(self, airport: AptDat.Airport) -> None:
         self._airport = airport
-        self.id = airport.id
+        self.id = None
         self.metadata = AptMetadata()
         self.boundary = None
         self.runways = []
@@ -146,6 +146,9 @@ class ParsedAirport:
         for row in row_iterator:
             row_code = row.row_code
 
+            if row_code == AptDat.RowCode.AIRPORT_HEADER:
+                self.id = row.tokens[4]
+
             if row_code == AptDat.RowCode.METADATA:
                 self.metadata.add_from_row(row)
 
@@ -156,7 +159,7 @@ class ParsedAirport:
                 self.boundary = boundary
 
             elif row_code == AptDat.RowCode.LAND_RUNWAY:
-                logger.debug(f"Parsing runway row.")
+                logger.debug("Parsing runway row.")
 
                 runway = Runway.from_line(row)
                 self.runways.append(runway)

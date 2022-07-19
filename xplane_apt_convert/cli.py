@@ -79,7 +79,6 @@ def convert(
         "-z",
         help="Number of points to use to plot bezier curves. "
         + "A higher number means more resolution but also larger file sizes.",
-        min=2,
     ),
 ):
     """
