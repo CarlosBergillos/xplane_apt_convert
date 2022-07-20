@@ -165,7 +165,7 @@ class ParsedAirport:
                 self.runways.append(runway)
 
             elif row_code == AptDat.RowCode.START_LOCATION_NEW:
-                logger.debug(f"Parsing startup location row.")
+                logger.debug("Parsing startup location row.")
 
                 startup_location = StartupLocation.from_line(row)
                 self.startup_locations.append(startup_location)
@@ -173,30 +173,28 @@ class ParsedAirport:
                 # TODO: process RowCode.START_LOCATION_EXT (startup location metadata)
 
             elif row_code == AptDat.RowCode.WINDSOCK:
-                logger.debug(f"Parsing sign row.")
+                logger.debug("Parsing sign row.")
 
                 windsock = Windsock.from_line(row)
                 self.windsocks.append(windsock)
 
             elif row_code == AptDat.RowCode.TAXI_SIGN:
-                logger.debug(f"Parsing sign row.")
+                logger.debug("Parsing sign row.")
 
                 sign = Sign.from_line(row)
                 self.signs.append(sign)
 
             elif row_code == AptDat.RowCode.TAXIWAY:
-                logger.debug(f"Parsing pavement row.")
+                logger.debug("Parsing pavement row.")
 
                 pavement = Pavement.from_row_iterator(row, row_iterator)
                 self.pavements.append(pavement)
 
             elif row_code == AptDat.RowCode.FREE_CHAIN:
-                logger.debug(f"Parsing linear feature row.")
+                logger.debug("Parsing linear feature row.")
 
                 for line in LinearFeature.from_row_iterator(row, row_iterator):
                     self.linear_features.append(line)
-
-        return ""
 
     def export(
         self,
