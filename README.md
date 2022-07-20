@@ -73,7 +73,7 @@ with open(input_file, "r") as f:
 apt = apt_dat.search_by_id(airport_id)
 
 p_apt = ParsedAirport(apt)
-p_apt.export("./aiport.geojson"")
+p_apt.export("./aiport.geojson")
 ```
 
 
@@ -89,3 +89,10 @@ apt = recommended_pack.apt
 p_apt = ParsedAirport(apt)
 p_apt.export("./aiport.shp", driver="GeoJSON")
 ```
+
+See the function's docstring for more information on all the allowed arguments.
+
+
+## License
+
+This software is licensed under the terms of the [MIT License](LICENSE).
