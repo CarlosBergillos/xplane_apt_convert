@@ -3,7 +3,7 @@ from collections import OrderedDict
 from dataclasses import dataclass
 from enum import Enum
 
-from .geometry import get_path_features
+from .geometry import get_paths
 from .iterators import BIterator
 
 try:
@@ -77,10 +77,12 @@ class Boundary(AptFeature):
 
     @staticmethod
     def from_row_iterator(
-        header_row: AptDat.AptDatLine, line_iterator: BIterator
+        header_row: AptDat.AptDatLine, line_iterator: BIterator, bezier_resolution: int
     ) -> "Boundary":
         tokens = header_row.tokens
-        coordinates, properties = get_path_features(line_iterator)
+        coordinates, properties = get_paths(
+            line_iterator, bezier_resolution=bezier_resolution
+        )
         return Boundary(
             name=" ".join(tokens[1:]),
             coordinates=coordinates,
@@ -117,10 +119,12 @@ class Pavement(AptFeature):
 
     @staticmethod
     def from_row_iterator(
-        header_row: AptDat.AptDatLine, line_iterator: BIterator
+        header_row: AptDat.AptDatLine, line_iterator: BIterator, bezier_resolution: int
     ) -> "Pavement":
         tokens = header_row.tokens
-        coordinates, properties = get_path_features(line_iterator)
+        coordinates, properties = get_paths(
+            line_iterator, bezier_resolution=bezier_resolution
+        )
         return Pavement(
             surface_type=SurfaceType(int(tokens[1])),
             smoothness=float(tokens[2]),
@@ -174,10 +178,14 @@ class LinearFeature(AptFeature):
 
     @staticmethod
     def from_row_iterator(
-        header_row: AptDat.AptDatLine, line_iterator: BIterator
+        header_row: AptDat.AptDatLine,
+        line_iterator: BIterator,
+        bezier_resolution: int,
     ) -> list["LinearFeature"]:
         tokens = header_row.tokens
-        coordinates_list, properties_list = get_path_features(line_iterator)
+        coordinates_list, properties_list = get_paths(
+            line_iterator, bezier_resolution=bezier_resolution
+        )
 
         return [
             LinearFeature(

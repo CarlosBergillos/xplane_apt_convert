@@ -77,7 +77,7 @@ def convert(
         _DEFAULT_BEZIER_RESOLUTION,
         "--bezier-resolution",
         "-z",
-        help="Number of points to use to plot bezier curves. "
+        help="Number of points to use to plot Bezier curves. "
         + "A higher number means more resolution but also larger file sizes.",
     ),
 ):
@@ -129,5 +129,5 @@ def convert(
         extension = SUPPORTED_DRIVERS[driver]["default_extension"]
         output_file = output_folder / f"{airport_id}.{extension}"
 
-        p_apt = ParsedAirport(apt)
+        p_apt = ParsedAirport(apt, bezier_resolution=bezier_resolution)
         p_apt.export(output_file, driver=driver, crs=crs, features=features.split(","))

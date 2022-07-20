@@ -19,6 +19,7 @@ from .classes import (
     StartupLocation,
     Windsock,
 )
+from .geometry import _DEFAULT_BEZIER_RESOLUTION
 from .iterators import BIterator
 
 try:
@@ -125,11 +126,19 @@ class ParsedAirport:
     linear_features: list[LinearFeature]
     pavements: list[Pavement]
 
-    def __init__(self, airport: AptDat.Airport) -> None:
+    def __init__(
+        self,
+        airport: AptDat.Airport,
+        bezier_resolution: int = _DEFAULT_BEZIER_RESOLUTION,
+    ) -> None:
         """A parsed X-Plane airport.
 
         Args:
-            airport (AptDat.Airport): An X-Plane airport object as obtained from `xplane_airports` (https://github.com/X-Plane/xplane_airports).
+            airport (xplane_airports.AptDat.Airport): An X-Plane airport object
+                as obtained from `xplane_airports` (https://github.com/X-Plane/xplane_airports).
+            bezier_resolution (int): Number of points to use to plot Bezier curves.
+                A higher number means more resolution but also larger file sizes on export.
+                Default 16.
         """
         self._airport = airport
         self.id = None
@@ -142,9 +151,9 @@ class ParsedAirport:
         self.linear_features = []
         self.pavements = []
 
-        self._parse()
+        self._parse(bezier_resolution=bezier_resolution)
 
-    def _parse(self) -> None:
+    def _parse(self, bezier_resolution: int) -> None:
         logger.info("Parsing airport.")
         row_iterator = BIterator(self._airport.text)
 
@@ -160,7 +169,9 @@ class ParsedAirport:
             elif row_code == AptDat.RowCode.BOUNDARY:
                 logger.debug("Parsing boundary row.")
 
-                boundary = Boundary.from_row_iterator(row, row_iterator)
+                boundary = Boundary.from_row_iterator(
+                    row, row_iterator, bezier_resolution
+                )
                 self.boundary = boundary
 
             elif row_code == AptDat.RowCode.LAND_RUNWAY:
@@ -192,13 +203,17 @@ class ParsedAirport:
             elif row_code == AptDat.RowCode.TAXIWAY:
                 logger.debug("Parsing pavement row.")
 
-                pavement = Pavement.from_row_iterator(row, row_iterator)
+                pavement = Pavement.from_row_iterator(
+                    row, row_iterator, bezier_resolution
+                )
                 self.pavements.append(pavement)
 
             elif row_code == AptDat.RowCode.FREE_CHAIN:
                 logger.debug("Parsing linear feature row.")
 
-                for line in LinearFeature.from_row_iterator(row, row_iterator):
+                for line in LinearFeature.from_row_iterator(
+                    row, row_iterator, bezier_resolution
+                ):
                     self.linear_features.append(line)
 
     def export(

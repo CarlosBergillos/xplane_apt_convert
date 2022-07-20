@@ -32,7 +32,9 @@ def _calculate_bezier(p0, p1, p2, p3=None, resolution=_DEFAULT_BEZIER_RESOLUTION
         return _calculate_cubic_bezier(p0, p1, p2, p3, resolution)
 
 
-def get_path(row_iterator):
+def get_paths(row_iterator, bezier_resolution):
+    # https://forums.x-plane.org/index.php?/forums/topic/66713-understanding-the-logic-of-bezier-control-points-in-aptdat/
+
     coordinates = []
     properties = {}
 
@@ -97,7 +99,9 @@ def get_path(row_iterator):
 
                 temp_bezier_nodes.append((mirr_lon, mirr_lat))
                 temp_bezier_nodes.append((lon, lat))
-                coordinates.extend(_calculate_bezier(*temp_bezier_nodes))
+                coordinates.extend(
+                    _calculate_bezier(*temp_bezier_nodes, resolution=bezier_resolution)
+                )
                 temp_bezier_nodes = []
             else:
                 if len(coordinates):
@@ -109,7 +113,11 @@ def get_path(row_iterator):
                     temp_bezier_nodes.append(coordinates[-1])
                     temp_bezier_nodes.append((mirr_lon, mirr_lat))
                     temp_bezier_nodes.append((lon, lat))
-                    coordinates.extend(_calculate_bezier(*temp_bezier_nodes))
+                    coordinates.extend(
+                        _calculate_bezier(
+                            *temp_bezier_nodes, resolution=bezier_resolution
+                        )
+                    )
                     temp_bezier_nodes = []
 
             temp_bezier_nodes.append((lon, lat))
@@ -184,7 +192,6 @@ def get_path(row_iterator):
                 _process_row(True, tokens)
                 break
             else:
-                # raise ValueError(f"Unexpected row code {row.row_code}")
                 row_iterator.unnext()
                 more_segments = False
                 break
@@ -194,34 +201,5 @@ def get_path(row_iterator):
 
         _finish_segment()
 
+    assert len(coordinates_list) == len(properties_list)
     return coordinates_list, properties_list
-
-
-def get_path_features(row_iterator):
-    # https://forums.x-plane.org/index.php?/forums/topic/66713-understanding-the-logic-of-bezier-control-points-in-aptdat/
-
-    # TODO: One same line can have different line styles (different properties), should be split into different features.
-    # features = []
-
-    coordinates, properties = get_path(row_iterator)
-
-    assert len(coordinates) == len(properties)
-
-    # props.update(
-    #     {
-    #         "type": "line",
-    #     }
-    # )
-
-    # linear_feature = geojson.Feature(geometry=line, properties=props)
-    # feature = {
-    #     "geometry": {
-    #         "type": "LineString",
-    #         "coordinates": node_paths[0],
-    #     },
-    #     "properties": {},
-    # }
-
-    # features.append(feature)
-
-    return coordinates, properties
