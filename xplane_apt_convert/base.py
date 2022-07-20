@@ -126,6 +126,11 @@ class ParsedAirport:
     pavements: list[Pavement]
 
     def __init__(self, airport: AptDat.Airport) -> None:
+        """A parsed X-Plane airport.
+
+        Args:
+            airport (AptDat.Airport): An X-Plane airport object as obtained from `xplane_airports` (https://github.com/X-Plane/xplane_airports).
+        """
         self._airport = airport
         self.id = None
         self.metadata = AptMetadata()
@@ -203,6 +208,21 @@ class ParsedAirport:
         crs: str = "EPSG:4326",
         features: list[str] = VALID_FEATURES,
     ) -> None:
+        """Export the parsed airport in a GIS-friendly format.
+
+        Args:
+            output_path (str, Path): File path for the output.
+                Note that with some drivers (like GeoJSON) multiple files will be generated (one per feature).
+            driver (str): OGR driver (file format) to use for the output.
+                See `xplane_apt_convert.base.SUPPORTED_DRIVERS.keys()` for a list of valid options.
+                If `None`, then the driver will be automatically inferred from the file extension in `output_path`.
+                Default `None`.
+            crs (str): Coordinate reference system (CRS) to use for the output.
+                Default "EPSG:4326".
+            features (list[str]): List of feature layers to include in the output.
+                See `xplane_apt_convert.base.VALID_FEATURES` for a list of valid options.
+                Default is all.
+        """
         if driver is not None and driver not in SUPPORTED_DRIVERS:
             raise ValueError(
                 f"Invalid driver '{driver}'. Supported drivers: {list(SUPPORTED_DRIVERS.keys())}"
