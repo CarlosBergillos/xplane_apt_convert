@@ -1,5 +1,18 @@
 # X-Plane apt.dat convert
 
+<a href="https://pypi.org/project/xplane-apt-convert/" target="_blank">
+    <img src="https://img.shields.io/pypi/v/xplane_apt_convert.svg" alt="Package version">
+</a>
+<a href="https://pypi.org/project/xplane-apt-convert/" target="_blank">
+    <img src="https://img.shields.io/pypi/pyversions/xplane_apt_convert.svg" alt="Supported Python versions">
+</a>
+<a href="https://pypi.org/project/xplane-apt-convert/" target="_blank">
+    <img src="https://img.shields.io/pypi/wheel/xplane_apt_convert.svg" alt="Wheel support">
+</a>
+<a href="https://pypi.org/project/xplane-apt-convert/" target="_blank">
+    <img src="https://img.shields.io/pypi/l/xplane_apt_convert.svg" alt="License">
+</a>
+
 Convert X-Plane airport data to GIS-friendly formats like GeoJSON or ESRI Shapefile.
 
 [![Example LELL airport layout](https://raw.githubusercontent.com/CarlosBergillos/xplane_apt_convert/main/images/example_LEBL.png)](https://raw.githubusercontent.com/CarlosBergillos/xplane_apt_convert/main/images/example_LEBL.png)
