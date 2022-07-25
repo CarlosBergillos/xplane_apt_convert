@@ -22,13 +22,14 @@ Convert X-Plane airport data to GIS-friendly formats like GeoJSON or ESRI Shapef
 
 ## Supported Features
 
-- Airport boundary
-- Runways
-- Pavement areas (taxiway and aprons)
-- Ground markings (linear features)
-- Ground signs
-- Aircraft startup locations (parking and gates)
-- Windsocks
+- **Windsocks** (row code `19`)
+- **Ground signs** (row code `20`)
+- **Runways** (row code `100`)
+- **Pavement areas (taxiway and aprons)** (header row code `110`)
+- **Ground markings (linear features)** (header row code `120`)
+- **Airport boundary** (header row code `130`)
+- **Aircraft startup locations (parking and gates)** (row code `1300`)
+- **Airport metadata** (row code `1302`)
 
 
 ## CLI Basic Usage
