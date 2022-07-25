@@ -2,7 +2,7 @@
 
 Convert X-Plane airport data to GIS-friendly formats like GeoJSON or ESRI Shapefile.
 
-[![Example LELL airport layout](./images/example_LEBL.png)](https://raw.githubusercontent.com/CarlosBergillos/xplane_apt_convert/main/images/example_LEBL.png)
+[![Example LELL airport layout](https://raw.githubusercontent.com/CarlosBergillos/xplane_apt_convert/main/images/example_LEBL.png)](https://raw.githubusercontent.com/CarlosBergillos/xplane_apt_convert/main/images/example_LEBL.png)
 
 
 ## Input
@@ -46,6 +46,15 @@ The following airport features are supported:
 - **Airport metadata** (row code `1302`)
 
 
+## Installation
+
+The `xplane_apt_convert` Python package can be installed using pip:
+
+```console
+pip install xplane_apt_convert
+```
+
+
 ## CLI Basic Usage
 
 Convert an airport in a local `apt.dat` file to GeoJSON:
@@ -72,7 +81,7 @@ Other output file formats are available using the `-d` option, for example `GeoJ
 
 For information about all available options run the command using `--help`.
 
-[![CLI help](./images/cli_help.svg)](https://raw.githubusercontent.com/CarlosBergillos/xplane_apt_convert/main/images/cli_help.svg)
+[![CLI help](https://raw.githubusercontent.com/CarlosBergillos/xplane_apt_convert/main/images/cli_help.svg)](https://raw.githubusercontent.com/CarlosBergillos/xplane_apt_convert/main/images/cli_help.svg)
 
 
 ## Python Basic Usage

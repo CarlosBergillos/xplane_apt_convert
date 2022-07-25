@@ -1,0 +1,49 @@
+[build-system]
+requires = ["setuptools>=61.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "xplane_apt_convert"
+description = "Convert X-Plane airport data to GIS-friendly formats like GeoJSON or ESRI Shapefile."
+readme = "README.md"
+requires-python = ">=3.6"
+license = { file = "LICENSE" }
+keywords = ["geojson", "gis", "geopackage", "airport", "shapefile", "ogr", "airports", "fiona", "xplane", "geobuf", "gpkg", "flatgeobuf"]
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Scientific/Engineering :: GIS",
+    "Topic :: Games/Entertainment :: Simulation",
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: End Users/Desktop",
+]
+dependencies = [
+    "bezier",
+    "fiona",
+    "numpy",
+    "rich",
+    "typer",
+    "xplane_airports",
+]
+dynamic = ["version"]
+
+[project.urls]
+"Source Code"     = "https://github.com/CarlosBergillos/xplane_apt_convert"
+
+[[project.authors]]
+name = "Carlos Bergillos"
+email = "c.bergillos.v@gmail.com"
+
+[tool.setuptools]
+packages = ["xplane_apt_convert"]
+
+[tool.setuptools.dynamic]
+version = { attr = "xplane_apt_convert.__version__" }
