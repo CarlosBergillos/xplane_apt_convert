@@ -4,9 +4,21 @@ Convert X-Plane airport data to GIS-friendly formats like GeoJSON or ESRI Shapef
 
 [![Example LELL airport layout](./images/example_LEBL.png)](https://raw.githubusercontent.com/CarlosBergillos/xplane_apt_convert/main/images/example_LEBL.png)
 
-**Note:** It has only been tested with `apt.dat` files with version 1100.
 
-## Supported Output Formats
+## Input
+
+X-Plane `apt.dat` files are used as input.
+Two input modes exist:
+
+- Load a local `apt.dat` file.
+- Automatically download airport-specific files from the [X-Plane Scenery Gateway](https://gateway.x-plane.com/).
+
+**Note:** Only tested with `apt.dat` files version 1100.
+
+
+## Output
+
+The following output formats are supported:
 
 | Format                     | Extension   |
 | :------------------------- | :---------- |
@@ -21,6 +33,8 @@ Convert X-Plane airport data to GIS-friendly formats like GeoJSON or ESRI Shapef
 
 
 ## Supported Features
+
+The following airport features are supported:
 
 - **Windsocks** (row code `19`)
 - **Ground signs** (row code `20`)
