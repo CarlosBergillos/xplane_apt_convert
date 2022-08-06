@@ -80,12 +80,20 @@ class Boundary(AptFeature):
         header_row: AptDat.AptDatLine, line_iterator: BIterator, bezier_resolution: int
     ) -> "Boundary":
         tokens = header_row.tokens
-        coordinates, properties = get_paths(
-            line_iterator, bezier_resolution=bezier_resolution
+        coordinates_list, properties_list = get_paths(
+            line_iterator,
+            bezier_resolution=bezier_resolution,
+            mode="polygon",
         )
+
+        coordinates_list = [c for c in coordinates_list if len(c) > 2]
+        properties_list = [
+            p for c, p in zip(coordinates_list, properties_list) if len(c) > 2
+        ]
+
         return Boundary(
             name=" ".join(tokens[1:]),
-            coordinates=coordinates,
+            coordinates=coordinates_list,
         )
 
     @staticmethod
@@ -122,15 +130,23 @@ class Pavement(AptFeature):
         header_row: AptDat.AptDatLine, line_iterator: BIterator, bezier_resolution: int
     ) -> "Pavement":
         tokens = header_row.tokens
-        coordinates, properties = get_paths(
-            line_iterator, bezier_resolution=bezier_resolution
+        coordinates_list, properties_list = get_paths(
+            line_iterator,
+            bezier_resolution=bezier_resolution,
+            mode="polygon",
         )
+
+        coordinates_list = [c for c in coordinates_list if len(c) > 2]
+        properties_list = [
+            p for c, p in zip(coordinates_list, properties_list) if len(c) > 2
+        ]
+
         return Pavement(
             surface_type=SurfaceType(int(tokens[1])),
             smoothness=float(tokens[2]),
             texture_orientation=float(tokens[3]),
             name=" ".join(tokens[4:]),
-            coordinates=coordinates,
+            coordinates=coordinates_list,
         )
 
     @staticmethod
@@ -184,7 +200,9 @@ class LinearFeature(AptFeature):
     ) -> list["LinearFeature"]:
         tokens = header_row.tokens
         coordinates_list, properties_list = get_paths(
-            line_iterator, bezier_resolution=bezier_resolution
+            line_iterator,
+            bezier_resolution=bezier_resolution,
+            mode="line",
         )
 
         return [
@@ -195,6 +213,7 @@ class LinearFeature(AptFeature):
                 coordinates=coordinates,
             )
             for coordinates, properties in zip(coordinates_list, properties_list)
+            if len(coordinates) > 1
         ]
 
     @staticmethod

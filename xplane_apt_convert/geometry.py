@@ -32,8 +32,10 @@ def _calculate_bezier(p0, p1, p2, p3=None, resolution=_DEFAULT_BEZIER_RESOLUTION
         return _calculate_cubic_bezier(p0, p1, p2, p3, resolution)
 
 
-def get_paths(row_iterator, bezier_resolution):
+def get_paths(row_iterator, bezier_resolution, mode="line"):
     # https://forums.x-plane.org/index.php?/forums/topic/66713-understanding-the-logic-of-bezier-control-points-in-aptdat/
+
+    assert mode == "line" or mode == "polygon"
 
     coordinates = []
     properties = {}
@@ -46,7 +48,18 @@ def get_paths(row_iterator, bezier_resolution):
     def _finish_segment():
         nonlocal coordinates, properties
         if len(coordinates) > 1:
-            coordinates_list.append(coordinates)
+            # simplify line. remove consecutive duplicates
+            prev_c = None
+            fixed_coordinates = []
+            for c in coordinates:
+                if prev_c is not None and tuple(c) == tuple(prev_c):
+                    continue
+
+                fixed_coordinates.append(c)
+
+                prev_c = c
+
+            coordinates_list.append(fixed_coordinates)
             properties_list.append(properties)
 
     def _process_row(is_bezier, tokens):
@@ -68,14 +81,17 @@ def get_paths(row_iterator, bezier_resolution):
             painted_line_type = int(tokens[3]) if len(tokens) > 3 else None
             lighting_line_type = int(tokens[4]) if len(tokens) > 4 else None
 
-            if (
-                painted_line_type is not None
-                and properties.get("painted_line_type") is not None
-                and painted_line_type != properties["painted_line_type"]
-            ) or (
-                lighting_line_type is not None
-                and properties.get("lighting_line_type") is not None
-                and lighting_line_type != properties["lighting_line_type"]
+            if mode == "line" and (
+                (
+                    painted_line_type is not None
+                    and properties.get("painted_line_type") is not None
+                    and painted_line_type != properties["painted_line_type"]
+                )
+                or (
+                    lighting_line_type is not None
+                    and properties.get("lighting_line_type") is not None
+                    and lighting_line_type != properties["lighting_line_type"]
+                )
             ):
                 if row_iterator.has_next():
                     _finish_segment()
@@ -129,14 +145,17 @@ def get_paths(row_iterator, bezier_resolution):
             painted_line_type = int(tokens[5]) if len(tokens) > 5 else None
             lighting_line_type = int(tokens[6]) if len(tokens) > 6 else None
 
-            if (
-                painted_line_type is not None
-                and properties.get("painted_line_type") is not None
-                and painted_line_type != properties["painted_line_type"]
-            ) or (
-                lighting_line_type is not None
-                and properties.get("lighting_line_type") is not None
-                and lighting_line_type != properties["lighting_line_type"]
+            if mode == "line" and (
+                (
+                    painted_line_type is not None
+                    and properties.get("painted_line_type") is not None
+                    and painted_line_type != properties["painted_line_type"]
+                )
+                or (
+                    lighting_line_type is not None
+                    and properties.get("lighting_line_type") is not None
+                    and lighting_line_type != properties["lighting_line_type"]
+                )
             ):
                 if row_iterator.has_next():
                     _finish_segment()

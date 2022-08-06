@@ -172,19 +172,25 @@ class ParsedAirport:
                 boundary = Boundary.from_row_iterator(
                     row, row_iterator, bezier_resolution
                 )
-                self.boundary = boundary
+
+                if boundary is not None:
+                    self.boundary = boundary
 
             elif row_code == AptDat.RowCode.LAND_RUNWAY:
                 logger.debug("Parsing runway row.")
 
                 runway = Runway.from_line(row)
-                self.runways.append(runway)
+
+                if runway is not None:
+                    self.runways.append(runway)
 
             elif row_code == AptDat.RowCode.START_LOCATION_NEW:
                 logger.debug("Parsing startup location row.")
 
                 startup_location = StartupLocation.from_line(row)
-                self.startup_locations.append(startup_location)
+
+                if startup_location is not None:
+                    self.startup_locations.append(startup_location)
 
                 # TODO: process RowCode.START_LOCATION_EXT (startup location metadata)
 
@@ -192,13 +198,17 @@ class ParsedAirport:
                 logger.debug("Parsing sign row.")
 
                 windsock = Windsock.from_line(row)
-                self.windsocks.append(windsock)
+
+                if windsock is not None:
+                    self.windsocks.append(windsock)
 
             elif row_code == AptDat.RowCode.TAXI_SIGN:
                 logger.debug("Parsing sign row.")
 
                 sign = Sign.from_line(row)
-                self.signs.append(sign)
+
+                if sign is not None:
+                    self.signs.append(sign)
 
             elif row_code == AptDat.RowCode.TAXIWAY:
                 logger.debug("Parsing pavement row.")
@@ -206,7 +216,9 @@ class ParsedAirport:
                 pavement = Pavement.from_row_iterator(
                     row, row_iterator, bezier_resolution
                 )
-                self.pavements.append(pavement)
+
+                if pavement is not None:
+                    self.pavements.append(pavement)
 
             elif row_code == AptDat.RowCode.FREE_CHAIN:
                 logger.debug("Parsing linear feature row.")
@@ -214,7 +226,8 @@ class ParsedAirport:
                 for line in LinearFeature.from_row_iterator(
                     row, row_iterator, bezier_resolution
                 ):
-                    self.linear_features.append(line)
+                    if line is not None:
+                        self.linear_features.append(line)
 
     def export(
         self,
