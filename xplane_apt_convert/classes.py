@@ -33,9 +33,9 @@ class ShoulderSurfaceType(Enum):
 class RunwayMarking(Enum):
     NONE = 0  # No runway markings
     VISUAL = 1  # Visual markings
-    NON_PRECISION = 3  # Non-precision approach markings
-    PRECISION = 4  # Precision approach markings
-    UK_NON_PRECISION = 5  # UK-style non-precision approach markings
+    NON_PRECISION = 2  # Non-precision approach markings
+    PRECISION = 3  # Precision approach markings
+    UK_NON_PRECISION = 4  # UK-style non-precision approach markings
     UK_PRECISION = 5  # UK-style precision approach markings
 
 
