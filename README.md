@@ -103,6 +103,10 @@ Convert an airport in a local `apt.dat` file to GeoJSON:
 
 ```python
 from xplane_airports.AptDat import AptDat
+from xplane_apt_convert import ParsedAirport
+
+input_file = "./apt.dat"
+airport_id = "LEBL"
 
 with open(input_file, "r") as f:
     apt_dat = AptDat.from_file_text(f.read(), input_file)
@@ -110,7 +114,7 @@ with open(input_file, "r") as f:
 apt = apt_dat.search_by_id(airport_id)
 
 p_apt = ParsedAirport(apt)
-p_apt.export("./aiport.geojson")
+p_apt.export("./airport.geojson")
 ```
 
 
@@ -118,13 +122,15 @@ Download an airport from the X-Plane Scenery Gateway and convert it to ESRI Shap
 
 ```python
 from xplane_airports.gateway import scenery_pack
-from xplane_airport_convert import ParsedAirport
+from xplane_apt_convert import ParsedAirport
+
+airport_id = "LEBL"
 
 recommended_pack = scenery_pack(airport_id)
 apt = recommended_pack.apt
 
 p_apt = ParsedAirport(apt)
-p_apt.export("./aiport.shp", driver="GeoJSON")
+p_apt.export("./airport.shp", driver="ESRI Shapefile")
 ```
 
 See the function's docstring for more information on all the allowed arguments.
