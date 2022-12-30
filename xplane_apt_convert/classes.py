@@ -9,9 +9,7 @@ from .iterators import BIterator
 try:
     from xplane_airports import AptDat
 except ImportError as e:
-    raise ImportError(
-        "Could not import xplane_airports. See https://github.com/X-Plane/xplane_airports."
-    ) from e
+    raise ImportError("Could not import xplane_airports. See https://github.com/X-Plane/xplane_airports.") from e
 
 
 class SurfaceType(Enum):
@@ -87,9 +85,7 @@ class Boundary(AptFeature):
         )
 
         coordinates_list = [c for c in coordinates_list if len(c) > 2]
-        properties_list = [
-            p for c, p in zip(coordinates_list, properties_list) if len(c) > 2
-        ]
+        properties_list = [p for c, p in zip(coordinates_list, properties_list) if len(c) > 2]
 
         return Boundary(
             name=" ".join(tokens[1:]),
@@ -137,9 +133,7 @@ class Pavement(AptFeature):
         )
 
         coordinates_list = [c for c in coordinates_list if len(c) > 2]
-        properties_list = [
-            p for c, p in zip(coordinates_list, properties_list) if len(c) > 2
-        ]
+        properties_list = [p for c, p in zip(coordinates_list, properties_list) if len(c) > 2]
 
         return Pavement(
             surface_type=SurfaceType(int(tokens[1])),
