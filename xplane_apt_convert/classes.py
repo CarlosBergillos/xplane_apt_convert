@@ -55,6 +55,12 @@ class ApproachLighting(Enum):
     RAIL = 12  # RAIL. Runway Alignment Indicator Lights
 
 
+class RunwayEndIdentifierLights(Enum):
+    NONE = 0  # No REIL
+    OMNIDIRECTIONAL_REIL = 1  # Omni-directional REIL
+    UNIDIRECTIONAL_REIL = 2  # Unidirectional REIL
+
+
 class SignSize(Enum):
     SMALL = 1  # Small taxiway sign
     MEDIUM = 2  # Medium taxiway sign
