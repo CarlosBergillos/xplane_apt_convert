@@ -39,6 +39,22 @@ class RunwayMarking(Enum):
     UK_PRECISION = 5  # UK-style precision approach markings
 
 
+class ApproachLighting(Enum):
+    NONE = 0  # No approach lighting
+    ALSF_I = 1  # ALSF-I. Approach Lighting System with Sequenced Flashing Lights
+    ALSF_II = 2  # ALSF-II. Approach Lighting System with Sequenced Flashing Lights
+    CALVERT = 3  # Calvert
+    CALVERT_II = 4  # Calvert ILS Cat II and Cat II
+    SSALR = 5  # SSALR. Simplified Short Approach Lighting System with Runway Alignment Indicator Lights
+    SSALF = 6  # SSALF. Simplified Short Approach Lighting System with Sequenced Flashing Lights
+    SALS = 7  # SALS. Short Approach Light System
+    MALSR = 8  # MALSR. Medium-intensity Approach Light System with Runway Alignment Indicator Lights
+    MALSF = 9  # MALSF. Medium-intensity Approach Light System with Sequenced Flashing Lights
+    MALS = 10  # MALS. Medium-intensity Approach Light System
+    ODALS = 11  # ODALS. Omni-Directional Approach Light System
+    RAIL = 12  # RAIL. Runway Alignment Indicator Lights
+
+
 class SignSize(Enum):
     SMALL = 1  # Small taxiway sign
     MEDIUM = 2  # Medium taxiway sign
