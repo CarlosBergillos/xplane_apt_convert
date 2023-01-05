@@ -67,7 +67,9 @@ The `xplane_apt_convert` Python package can be installed using pip:
 pip install xplane_apt_convert
 ```
 
-When using Python 3.10 or above, you might encounter the following error during the installation of the the `bezier` dependency:
+**Python 3.10 and above**
+
+When using Python 3.10 and above, you might encounter the following error during the installation of the the `bezier` dependency:
 `The BEZIER_INSTALL_PREFIX environment variable must be set.`
 
 To solve it, you can install the pure Python version of the `bezier` package by running:
