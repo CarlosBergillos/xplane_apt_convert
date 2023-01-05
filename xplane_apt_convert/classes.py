@@ -1,7 +1,8 @@
 from abc import ABC, abstractmethod
 from collections import OrderedDict
 from dataclasses import dataclass
-from enum import Enum
+from enum import Enum, EnumMeta
+import logging
 
 from .geometry import get_paths
 from .iterators import BIterator
@@ -9,10 +10,42 @@ from .iterators import BIterator
 try:
     from xplane_airports import AptDat
 except ImportError as e:
-    raise ImportError("Could not import xplane_airports. See https://github.com/X-Plane/xplane_airports.") from e
+    raise ImportError("Could not import xplane_airports. Install https://github.com/X-Plane/xplane_airports.") from e
 
 
-class SurfaceType(Enum):
+logger = logging.getLogger("xplane_apt_convert")
+logged_unknowns = set()  # TODO: this should be reset with each different airport parsing
+
+
+class FallbackEnumMeta(EnumMeta):
+    class Fallback:
+        def __init__(self, name):
+            self.name = name
+
+    def __call__(cls, value, names=None, *args, **kwargs):
+        try:
+            return EnumMeta.__call__(cls, value, names=None, *args, **kwargs)
+        except ValueError:
+            if names is not None:
+                # using functional API attempting to create a new Enum type
+                raise
+
+            if value is None:
+                return FallbackEnumMeta.Fallback(None)
+            else:
+                if (cls, value) not in logged_unknowns:
+                    logger.warning(f"Unknown value {value} found for {cls.__name__}.")
+                    # do not log same warning many times
+                    logged_unknowns.add((cls, value))
+
+                return FallbackEnumMeta.Fallback(f"UNKNOWN_{value}")
+
+
+class FallbackEnum(Enum, metaclass=FallbackEnumMeta):
+    """Custom subclass of Enum that supports handling of arbitrary unknown values."""
+
+
+class SurfaceType(FallbackEnum):
     ASPHALT = 1  # Asphalt
     CONCRETE = 2  # Concrete
     TURF_OR_GRASS = 3  # Turf or grass
@@ -24,13 +57,13 @@ class SurfaceType(Enum):
     TRANSPARENT = 15  # Transparent
 
 
-class ShoulderSurfaceType(Enum):
+class ShoulderSurfaceType(FallbackEnum):
     NONE = 0  # No shoulder
     ASPHALT = 1  # Asphalt shoulder
     CONCRETE = 2  # Concrete shoulder
 
 
-class RunwayMarking(Enum):
+class RunwayMarking(FallbackEnum):
     NONE = 0  # No runway markings
     VISUAL = 1  # Visual markings
     NON_PRECISION = 2  # Non-precision approach markings
@@ -39,7 +72,7 @@ class RunwayMarking(Enum):
     UK_PRECISION = 5  # UK-style precision approach markings
 
 
-class ApproachLighting(Enum):
+class ApproachLighting(FallbackEnum):
     NONE = 0  # No approach lighting
     ALSF_I = 1  # ALSF-I. Approach Lighting System with Sequenced Flashing Lights
     ALSF_II = 2  # ALSF-II. Approach Lighting System with Sequenced Flashing Lights
@@ -55,13 +88,13 @@ class ApproachLighting(Enum):
     RAIL = 12  # RAIL. Runway Alignment Indicator Lights
 
 
-class RunwayEndIdentifierLights(Enum):
+class RunwayEndIdentifierLights(FallbackEnum):
     NONE = 0  # No REIL
     OMNIDIRECTIONAL_REIL = 1  # Omni-directional REIL
     UNIDIRECTIONAL_REIL = 2  # Unidirectional REIL
 
 
-class SignSize(Enum):
+class SignSize(FallbackEnum):
     SMALL = 1  # Small taxiway sign
     MEDIUM = 2  # Medium taxiway sign
     LARGE = 3  # Large taxiway sign
