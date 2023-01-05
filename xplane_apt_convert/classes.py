@@ -267,8 +267,8 @@ class RunwayEnd:
     dthr_length: float  # Displaced Threshold length in meters
     overrun_length: float  # in meters
     marking: RunwayMarking
-    lighting: int
-    tdz_lighting: int  # Touchdown Zone lighting
+    lighting: ApproachLighting
+    tdz_lighting: bool  # Touchdown Zone lighting
     reil: int  # Runway End Identifier Lights
 
     @staticmethod
@@ -279,10 +279,10 @@ class RunwayEnd:
             longitude=float(tokens[2]),
             dthr_length=float(tokens[3]),
             overrun_length=float(tokens[4]),
-            marking=None,  # TODO
-            lighting=None,  # TODO
-            tdz_lighting=None,  # TODO
-            reil=None,  # TODO
+            marking=RunwayMarking(int(tokens[5])),
+            lighting=ApproachLighting(int(tokens[6])),
+            tdz_lighting=bool(int(tokens[7])),
+            reil=RunwayEndIdentifierLights(int(tokens[8])),
         )
 
 
@@ -327,6 +327,20 @@ class Runway(AptFeature):
                     ("centerline_lights", "int"),
                     ("edge_lights", "int"),
                     ("auto_distance_remaining_signs", "bool"),
+                    ("name_1", "str"),
+                    ("name_2", "str"),
+                    ("dthr_length_1", "float"),
+                    ("dthr_length_2", "float"),
+                    ("overrun_length_1", "float"),
+                    ("overrun_length_2", "float"),
+                    ("marking_1", "str"),
+                    ("marking_2", "str"),
+                    ("lighting_1", "str"),
+                    ("lighting_2", "str"),
+                    ("tdz_lighting_1", "bool"),
+                    ("tdz_lighting_2", "bool"),
+                    ("reil_1", "str"),
+                    ("reil_2", "str"),
                 ]
             ),
         }
@@ -348,6 +362,20 @@ class Runway(AptFeature):
                 "centerline_lights": self.centerline_lights,
                 "edge_lights": self.edge_lights,
                 "auto_distance_remaining_signs": self.auto_distance_remaining_signs,
+                "name_1": self.ends[0].name,
+                "name_2": self.ends[1].name,
+                "dthr_length_1": self.ends[0].dthr_length,
+                "dthr_length_2": self.ends[1].dthr_length,
+                "overrun_length_1": self.ends[0].overrun_length,
+                "overrun_length_2": self.ends[1].overrun_length,
+                "marking_1": self.ends[0].marking.name,
+                "marking_2": self.ends[1].marking.name,
+                "lighting_1": self.ends[0].lighting.name,
+                "lighting_2": self.ends[1].lighting.name,
+                "tdz_lighting_1": self.ends[0].tdz_lighting,
+                "tdz_lighting_2": self.ends[1].tdz_lighting,
+                "reil_1": self.ends[0].reil.name,
+                "reil_2": self.ends[1].reil.name,
             },
         }
 
