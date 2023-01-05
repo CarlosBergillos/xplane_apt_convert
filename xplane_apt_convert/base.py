@@ -34,7 +34,7 @@ logging.basicConfig(
     datefmt="[%X]",
     handlers=[RichHandler(show_path=False, omit_repeated_times=False)],
 )
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("xplane_apt_convert")
 logger.setLevel(logging.INFO)
 
 
