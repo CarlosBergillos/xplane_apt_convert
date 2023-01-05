@@ -13,7 +13,7 @@
     <img src="https://img.shields.io/pypi/l/xplane_apt_convert.svg" alt="License">
 </a>
 
-Convert X-Plane airport data to GIS-friendly formats like GeoJSON or ESRI Shapefile.
+`xplane_apt_convert` is a Python package and CLI application allowing to convert X-Plane airport data to GIS-friendly formats like GeoJSON or ESRI Shapefile.
 
 [![Example LELL airport layout](https://raw.githubusercontent.com/CarlosBergillos/xplane_apt_convert/main/images/example_LEBL.png)](https://raw.githubusercontent.com/CarlosBergillos/xplane_apt_convert/main/images/example_LEBL.png)
 
