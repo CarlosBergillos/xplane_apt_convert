@@ -1,7 +1,8 @@
 from abc import ABC, abstractmethod
 from collections import OrderedDict
 from dataclasses import dataclass
-from enum import Enum
+from enum import Enum, EnumMeta
+import logging
 
 from .geometry import get_paths
 from .iterators import BIterator
@@ -9,10 +10,115 @@ from .iterators import BIterator
 try:
     from xplane_airports import AptDat
 except ImportError as e:
-    raise ImportError("Could not import xplane_airports. See https://github.com/X-Plane/xplane_airports.") from e
+    raise ImportError("Could not import xplane_airports. Install https://github.com/X-Plane/xplane_airports.") from e
 
 
-class SurfaceType(Enum):
+logger = logging.getLogger("xplane_apt_convert")
+logged_unknowns = set()  # TODO: this should be reset with each different airport parsing
+
+
+class FallbackEnumMeta(EnumMeta):
+    class Fallback:
+        def __init__(self, name):
+            self.name = name
+
+    def __call__(cls, value, names=None, *args, **kwargs):
+        try:
+            return EnumMeta.__call__(cls, value, names=None, *args, **kwargs)
+        except ValueError:
+            if names is not None:
+                # using functional API attempting to create a new Enum type
+                raise
+
+            if value is None:
+                return FallbackEnumMeta.Fallback(None)
+            else:
+                if (cls, value) not in logged_unknowns:
+                    logger.warning(f"Unknown value {value} found for {cls.__name__}.")
+                    # do not log same warning many times
+                    logged_unknowns.add((cls, value))
+
+                return FallbackEnumMeta.Fallback(f"UNKNOWN_{value}")
+
+
+class FallbackEnum(Enum, metaclass=FallbackEnumMeta):
+    """Custom subclass of Enum that supports handling of arbitrary unknown values."""
+
+
+class LineType(FallbackEnum):
+    NONE = 0
+    SOLID_YELLOW = 1
+    BROKEN_YELLOW = 2
+    DOUBLE_SOLID_YELLOW = 3
+    RUNWAY_HOLD = 4  # DOUBLE_BROKEN_YELLOW_WITH_PARALLEL_DOUBLE_SOLID_YELLOW = 4
+    OTHER_HOLD = 5  # BROKEN_YELLOW_WITH_PARALLEL_SOLID_YELLOW = 5
+    ILS_HOLD = 6  # YELLOW_CROSSHATCHED = 6
+    ILS_CRITICAL_CENTERLINE = 7
+    SEPARATED_BROKEN_YELLOW = 8
+    SEPARATED_DOUBLE_BROKEN_YELLOW = 9
+    WIDE_SOLID_YELLOW = 10
+    WIDE_ILS_CRITICAL_CENTERLINE = 11
+    WIDE_RUNWAY_HOLD = 12
+    WIDE_OTHER_HOLD = 13
+    WIDE_ILS_HOLD = 14
+
+    SOLID_YELLOW_WITH_BLACK_BORDER = 51
+    BROKEN_YELLOW_WITH_BLACK_BORDER = 52
+    DOUBLE_SOLID_YELLOW_WITH_BLACK_BORDER = 53
+    RUNWAY_HOLD_WITH_BLACK_BORDER = 54
+    OTHER_HOLD_WITH_BLACK_BORDER = 55
+    ILS_HOLD_WITH_BLACK_BORDER = 56
+    ILS_CRITICAL_CENTERLINE_WITH_BLACK_BORDER = 57
+    SEPARATED_BROKEN_YELLOW_WITH_BLACK_BORDER = 58
+    SEPARATED_DOUBLE_BROKEN_YELLOW_WITH_BLACK_BORDER = 59
+    WIDE_SOLID_YELLOW_WITH_BLACK_BORDER = 60
+    WIDE_ILS_CRITICAL_CENTERLINE_WITH_BLACK_BORDER = 61
+    WIDE_RUNWAY_HOLD_WITH_BLACK_BORDER = 62
+    WIDE_OTHER_HOLD_WITH_BLACK_BORDER = 63
+    WIDE_ILS_HOLD_WITH_BLACK_BORDER = 64
+
+    VERY_WIDE_YELLOW = 19
+
+    SOLID_WHITE = 20
+    CHEQUERED_WHITE = 21
+    BROKEN_WHITE = 22
+    SHORT_BROKEN_WHITE = 23
+    WIDE_SOLID_WHITE = 24
+    WIDE_BROKEN_WHITE = 25
+    SOLID_RED = 30
+    BROKEN_RED = 31
+    WIDE_SOLID_RED = 32
+    SOLID_ORANGE = 40
+    SOLID_BLUE = 41
+    SOLID_GREEN = 42
+
+    SOLID_WHITE_WITH_BLACK_BORDER = 70
+    CHEQUERED_WHITE_WITH_BLACK_BORDER = 71
+    BROKEN_WHITE_WITH_BLACK_BORDER = 72
+    SHORT_BROKEN_WHITE_WITH_BLACK_BORDER = 73
+    WIDE_SOLID_WHITE_WITH_BLACK_BORDER = 74
+    WIDE_BROKEN_WHITE_WITH_BLACK_BORDER = 75
+    SOLID_RED_WITH_BLACK_BORDER = 80
+    BROKEN_RED_WITH_BLACK_BORDER = 81
+    WIDE_SOLID_RED_WITH_BLACK_BORDER = 82
+    SOLID_ORANGE_WITH_BLACK_BORDER = 90
+    SOLID_BLUE_WITH_BLACK_BORDER = 91
+    SOLID_GREEN_WITH_BLACK_BORDER = 92
+
+
+class LineLightingType(FallbackEnum):
+    NONE = 0
+    GREEN_BIDIRECTIONAL_LIGHTS = 101
+    BLUE_OMNIDIRECTIONAL_LIGHTS = 102
+    AMBER_UNIDIRECTIONAL_LIGHTS = 103
+    AMBER_UNIDIRECTIONAL_PULSATING_LIGHTS = 104
+    ALTERNATING_AMBER_GREEN_BIDIRECTIONAL_LIGHTS = 105
+    RED_OMNIDIRECTIONAL_LIGHTS = 106
+    GREEN_UNIDIRECTIONAL_LIGHTS = 107
+    ALTERNATING_AMBER_GREEN_UNIDIRECTIONAL_LIGHTS = 108
+
+
+class SurfaceType(FallbackEnum):
     ASPHALT = 1  # Asphalt
     CONCRETE = 2  # Concrete
     TURF_OR_GRASS = 3  # Turf or grass
@@ -24,13 +130,13 @@ class SurfaceType(Enum):
     TRANSPARENT = 15  # Transparent
 
 
-class ShoulderSurfaceType(Enum):
+class ShoulderSurfaceType(FallbackEnum):
     NONE = 0  # No shoulder
     ASPHALT = 1  # Asphalt shoulder
     CONCRETE = 2  # Concrete shoulder
 
 
-class RunwayMarking(Enum):
+class RunwayMarking(FallbackEnum):
     NONE = 0  # No runway markings
     VISUAL = 1  # Visual markings
     NON_PRECISION = 2  # Non-precision approach markings
@@ -39,7 +145,7 @@ class RunwayMarking(Enum):
     UK_PRECISION = 5  # UK-style precision approach markings
 
 
-class ApproachLighting(Enum):
+class ApproachLighting(FallbackEnum):
     NONE = 0  # No approach lighting
     ALSF_I = 1  # ALSF-I. Approach Lighting System with Sequenced Flashing Lights
     ALSF_II = 2  # ALSF-II. Approach Lighting System with Sequenced Flashing Lights
@@ -55,13 +161,13 @@ class ApproachLighting(Enum):
     RAIL = 12  # RAIL. Runway Alignment Indicator Lights
 
 
-class RunwayEndIdentifierLights(Enum):
+class RunwayEndIdentifierLights(FallbackEnum):
     NONE = 0  # No REIL
     OMNIDIRECTIONAL_REIL = 1  # Omni-directional REIL
     UNIDIRECTIONAL_REIL = 2  # Unidirectional REIL
 
 
-class SignSize(Enum):
+class SignSize(FallbackEnum):
     SMALL = 1  # Small taxiway sign
     MEDIUM = 2  # Medium taxiway sign
     LARGE = 3  # Large taxiway sign
@@ -224,8 +330,8 @@ class LinearFeature(AptFeature):
         return [
             LinearFeature(
                 name=" ".join(tokens[1:]),
-                painted_line_type=properties.get("painted_line_type"),
-                lighting_line_type=properties.get("lighting_line_type"),
+                painted_line_type=LineType(properties.get("painted_line_type")),
+                lighting_line_type=LineLightingType(properties.get("lighting_line_type")),
                 coordinates=coordinates,
             )
             for coordinates, properties in zip(coordinates_list, properties_list)
@@ -239,8 +345,8 @@ class LinearFeature(AptFeature):
             "properties": OrderedDict(
                 [
                     ("name", "str"),
-                    ("painted_line_type", "int"),
-                    ("lighting_line_type", "int"),
+                    ("painted_line_type", "str"),
+                    ("lighting_line_type", "str"),
                 ]
             ),
         }
@@ -253,8 +359,8 @@ class LinearFeature(AptFeature):
             },
             "properties": {
                 "name": self.name,
-                "painted_line_type": self.painted_line_type,
-                "lighting_line_type": self.lighting_line_type,
+                "painted_line_type": self.painted_line_type.name,
+                "lighting_line_type": self.lighting_line_type.name,
             },
         }
 
