@@ -305,8 +305,6 @@ class ParsedAirport:
                 logger.warning(f"No {part_name} found.")
                 continue
 
-            logger.info(f"Writing {part_name}.")
-
             part_type = get_type_hints(ParsedAirport)[part_name]
             part_type_origin = get_origin(part_type)
             part_type_args = get_args(part_type)
@@ -335,6 +333,8 @@ class ParsedAirport:
             else:
                 path = base_folder / f"{base_name}.{part_name}{suffix}"
                 layer = None
+
+            logger.info(f"Writing '{part_name}' to file: {path.resolve()}")
 
             with fiona.open(
                 path,
