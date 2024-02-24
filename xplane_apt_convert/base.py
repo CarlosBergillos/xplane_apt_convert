@@ -25,7 +25,10 @@ from .iterators import BIterator
 try:
     from xplane_airports import AptDat
 except ImportError as e:
-    raise ImportError("Could not import xplane_airports. Install https://github.com/X-Plane/xplane_airports.") from e
+    raise ImportError(
+        "Could not import xplane_airports. "
+        "Install https://github.com/X-Plane/xplane_airports."
+    ) from e
 
 
 logging.basicConfig(
@@ -167,7 +170,9 @@ class ParsedAirport:
             elif row_code == AptDat.RowCode.BOUNDARY:
                 logger.debug("Parsing boundary row.")
 
-                boundary = Boundary.from_row_iterator(row, row_iterator, bezier_resolution)
+                boundary = Boundary.from_row_iterator(
+                    row, row_iterator, bezier_resolution
+                )
 
                 if boundary is not None:
                     self.boundary = boundary
@@ -209,7 +214,9 @@ class ParsedAirport:
             elif row_code == AptDat.RowCode.TAXIWAY:
                 logger.debug("Parsing pavement row.")
 
-                pavement = Pavement.from_row_iterator(row, row_iterator, bezier_resolution)
+                pavement = Pavement.from_row_iterator(
+                    row, row_iterator, bezier_resolution
+                )
 
                 if pavement is not None:
                     self.pavements.append(pavement)
@@ -217,7 +224,9 @@ class ParsedAirport:
             elif row_code == AptDat.RowCode.FREE_CHAIN:
                 logger.debug("Parsing linear feature row.")
 
-                for line in LinearFeature.from_row_iterator(row, row_iterator, bezier_resolution):
+                for line in LinearFeature.from_row_iterator(
+                    row, row_iterator, bezier_resolution
+                ):
                     if line is not None:
                         self.linear_features.append(line)
 
@@ -244,9 +253,15 @@ class ParsedAirport:
                 Default is all.
         """
         if driver is not None and driver not in SUPPORTED_DRIVERS:
-            raise ValueError(f"Invalid driver '{driver}'. Supported drivers: {list(SUPPORTED_DRIVERS.keys())}")
+            raise ValueError(
+                f"Invalid driver '{driver}'. Supported drivers: {list(SUPPORTED_DRIVERS.keys())}"
+            )
 
-        if isinstance(output_path, str) and len(output_path) > 0 and output_path[-1] == "/":
+        if (
+            isinstance(output_path, str)
+            and len(output_path) > 0
+            and output_path[-1] == "/"
+        ):
             raise ValueError("output_path cannot be a directory.")
 
         if not isinstance(output_path, Path):
@@ -256,7 +271,8 @@ class ParsedAirport:
 
         if not suffix and not driver:
             raise ValueError(
-                "Unknown output driver. Output path must have a valid file extension or an explicit driver must be provided."
+                "Unknown output driver. "
+                "Output path must have a valid file extension or an explicit driver must be provided."
             )
 
         if driver is None:
@@ -264,7 +280,8 @@ class ParsedAirport:
 
             if driver is None:
                 raise ValueError(
-                    f"Format {output_path.suffix} not recognized. Provide a valid file extension or specify an explicit driver."
+                    f"Format {output_path.suffix} not recognized. "
+                    "Provide a valid file extension or specify an explicit driver."
                 )
 
         base_folder = output_path.parent
@@ -277,7 +294,10 @@ class ParsedAirport:
 
         for part_name in features:
             if part_name not in VALID_FEATURES:
-                raise ValueError(f"{part_name} is not a valid include. Valid options are: {VALID_FEATURES}")
+                raise ValueError(
+                    f"{part_name} is not a valid include. "
+                    f"Valid options are: {VALID_FEATURES}"
+                )
 
             part = getattr(self, part_name)
 
@@ -331,6 +351,8 @@ class ParsedAirport:
 
                 if _BASE_CRS != crs:
                     for record in records:
-                        record["geometry"] = transform_geom(_BASE_CRS, crs, record["geometry"])
+                        record["geometry"] = transform_geom(
+                            _BASE_CRS, crs, record["geometry"]
+                        )
 
                 output.writerecords(records)
