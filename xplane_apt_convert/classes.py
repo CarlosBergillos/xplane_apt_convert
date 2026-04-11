@@ -18,7 +18,6 @@ except ImportError as e:
 
 logger = logging.getLogger("xplane_apt_convert")
 
-# TODO: this should be reset with each different airport parsing
 logged_unknowns = set()
 
 
