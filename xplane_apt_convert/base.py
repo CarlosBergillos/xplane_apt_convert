@@ -195,7 +195,15 @@ class ParsedAirport:
                 if startup_location is not None:
                     self.startup_locations.append(startup_location)
 
-                # TODO: process RowCode.START_LOCATION_EXT (startup location metadata)
+            elif row_code == AptDat.RowCode.START_LOCATION_EXT:
+                logger.debug("Parsing startup location metadata row.")
+
+                if self.startup_locations:
+                    tokens = row.tokens
+                    last = self.startup_locations[-1]
+                    last.width_code = tokens[1] if len(tokens) > 1 else None
+                    last.operation_type = tokens[2] if len(tokens) > 2 else None
+                    last.airline_codes = " ".join(tokens[3:]) if len(tokens) > 3 else None
 
             elif row_code == AptDat.RowCode.WINDSOCK:
                 logger.debug("Parsing sign row.")
