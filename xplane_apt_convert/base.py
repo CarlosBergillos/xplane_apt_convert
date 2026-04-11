@@ -18,6 +18,7 @@ from .classes import (
     Sign,
     StartupLocation,
     Windsock,
+    logged_unknowns,
 )
 from .geometry import _DEFAULT_BEZIER_RESOLUTION
 from .iterators import BIterator
@@ -141,6 +142,7 @@ class ParsedAirport:
                 A higher number means more resolution but also larger file sizes on export.
                 Default 16.
         """
+        logged_unknowns.clear()
         self._airport = airport
         self.id = None
         self.metadata = AptMetadata()
