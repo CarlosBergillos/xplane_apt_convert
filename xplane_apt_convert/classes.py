@@ -3,6 +3,7 @@ from collections import OrderedDict
 from dataclasses import dataclass
 from enum import Enum, EnumMeta
 import logging
+from typing import Optional
 
 from .geometry import get_paths
 from .iterators import BIterator
@@ -504,6 +505,9 @@ class StartupLocation(AptFeature):
     location_type: str
     airplane_types: str
     name: str
+    width_code: Optional[str] = None
+    operation_type: Optional[str] = None
+    airline_codes: Optional[str] = None
 
     @staticmethod
     def from_line(line: AptDat.AptDatLine) -> "StartupLocation":
@@ -527,6 +531,9 @@ class StartupLocation(AptFeature):
                     ("location_type", "str"),
                     ("airplane_types", "str"),
                     ("name", "str"),
+                    ("width_code", "str"),
+                    ("operation_type", "str"),
+                    ("airline_codes", "str"),
                 ]
             ),
         }
@@ -542,6 +549,9 @@ class StartupLocation(AptFeature):
                 "location_type": self.location_type,
                 "airplane_types": self.airplane_types,
                 "name": self.name,
+                "width_code": self.width_code,
+                "operation_type": self.operation_type,
+                "airline_codes": self.airline_codes,
             },
         }
 
