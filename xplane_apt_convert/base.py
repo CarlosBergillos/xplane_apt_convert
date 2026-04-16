@@ -18,6 +18,7 @@ from .classes import (
     Sign,
     StartupLocation,
     Windsock,
+    logged_unknowns,
 )
 from .geometry import _DEFAULT_BEZIER_RESOLUTION
 from .iterators import BIterator
@@ -141,6 +142,7 @@ class ParsedAirport:
                 A higher number means more resolution but also larger file sizes on export.
                 Default 16.
         """
+        logged_unknowns.clear()
         self._airport = airport
         self.id = None
         self.metadata = AptMetadata()
@@ -193,7 +195,11 @@ class ParsedAirport:
                 if startup_location is not None:
                     self.startup_locations.append(startup_location)
 
-                # TODO: process RowCode.START_LOCATION_EXT (startup location metadata)
+            elif row_code == AptDat.RowCode.START_LOCATION_EXT:
+                logger.debug("Parsing startup location metadata row.")
+
+                if self.startup_locations:
+                    self.startup_locations[-1].enrich_from_metadata_line(row)
 
             elif row_code == AptDat.RowCode.WINDSOCK:
                 logger.debug("Parsing sign row.")

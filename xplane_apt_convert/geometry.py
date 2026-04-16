@@ -70,8 +70,8 @@ def get_paths(row_iterator, bezier_resolution, mode="line"):
             if in_bezier:
                 temp_bezier_nodes.append((lon, lat))
                 coordinates.extend(
-                    _calculate_bezier(*temp_bezier_nodes)
-                )  # TODO: pass resolution argument
+                    _calculate_bezier(*temp_bezier_nodes, resolution=bezier_resolution)
+                )
                 temp_bezier_nodes = []
             else:
                 coordinates.append((lon, lat))
