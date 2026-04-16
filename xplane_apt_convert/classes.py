@@ -521,6 +521,12 @@ class StartupLocation(AptFeature):
             name=" ".join(tokens[6:]),
         )
 
+    def enrich_from_metadata_line(self, line: AptDat.AptDatLine) -> None:
+        tokens = line.tokens
+        self.width_code = tokens[1] if len(tokens) > 1 else None
+        self.operation_type = tokens[2] if len(tokens) > 2 else None
+        self.airline_codes = " ".join(tokens[3:]) if len(tokens) > 3 else None
+
     @staticmethod
     def _schema():
         return {
