@@ -8,8 +8,9 @@ from requests import HTTPError
 from xplane_airports.AptDat import AptDat
 from xplane_airports.gateway import scenery_pack
 
-from .base import SUPPORTED_DRIVERS, VALID_FEATURES, ParsedAirport
+from .drivers import SUPPORTED_DRIVERS, VALID_FEATURES
 from .geometry import _DEFAULT_BEZIER_RESOLUTION
+from .parser import ParsedAirport
 
 app = typer.Typer(
     add_completion=False,
