@@ -12,14 +12,10 @@ class FallbackEnumMeta(EnumMeta):
         def __init__(self, name):
             self.name = name
 
-    def __call__(cls, value, names=None, *args, **kwargs):
+    def __call__(cls, value, *args, **kwargs):
         try:
-            return EnumMeta.__call__(cls, value, names=None, *args, **kwargs)
+            return EnumMeta.__call__(cls, value, *args, **kwargs)
         except ValueError:
-            if names is not None:
-                # using functional API attempting to create a new Enum type
-                raise
-
             if value is None:
                 return FallbackEnumMeta.Fallback(None)
             else:
