@@ -8,6 +8,8 @@ class RunwayMarking(FallbackEnum):
     PRECISION = 3  # Precision approach markings
     UK_NON_PRECISION = 4  # UK-style non-precision approach markings
     UK_PRECISION = 5  # UK-style precision approach markings
+    EASA_NON_PRECISION = 6  # EASA-style non-precision approach markings
+    EASA_PRECISION = 7  # EASA-style precision approach markings
 
 
 class ApproachLighting(FallbackEnum):
