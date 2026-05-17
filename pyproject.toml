@@ -45,8 +45,14 @@ dynamic = ["version"]
 name = "Carlos Bergillos"
 email = "c.bergillos.v@gmail.com"
 
-[tool.setuptools]
-packages = ["xplane_apt_convert"]
+[project.optional-dependencies]
+dev = ["pytest"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
 
 [tool.setuptools.dynamic]
 version = { attr = "xplane_apt_convert.__version__" }

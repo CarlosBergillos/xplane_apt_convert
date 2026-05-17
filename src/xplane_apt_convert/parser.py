@@ -7,9 +7,11 @@ from typing import Optional, Union, get_args, get_origin, get_type_hints
 import fiona
 from fiona.transform import transform_geom
 from rich.logging import RichHandler
+from xplane_airports import AptDat
 
-from .classes import (
-    AptFeature,
+from .drivers import SUPPORTED_DRIVERS, VALID_FEATURES, _detect_driver
+from .enums import logged_unknowns
+from .features import (
     AptMetadata,
     Boundary,
     LinearFeature,
@@ -18,18 +20,9 @@ from .classes import (
     Sign,
     StartupLocation,
     Windsock,
-    logged_unknowns,
 )
 from .geometry import _DEFAULT_BEZIER_RESOLUTION
 from .iterators import BIterator
-
-try:
-    from xplane_airports import AptDat
-except ImportError as e:
-    raise ImportError(
-        "Could not import xplane_airports. "
-        "Install https://github.com/X-Plane/xplane_airports."
-    ) from e
 
 
 logging.basicConfig(
@@ -43,78 +36,6 @@ logger.setLevel(logging.INFO)
 
 
 _BASE_CRS = "EPSG:4326"
-
-SUPPORTED_DRIVERS = {
-    "ESRI Shapefile": {
-        "multilayer": False,
-        "extensions": ["shp", "dbf", "shz", "shp.zip"],
-        "default_extension": "shp",
-    },
-    "FlatGeobuf": {
-        "multilayer": False,
-        "extensions": ["fgb"],
-        "default_extension": "fgb",
-    },
-    "GeoJSON": {
-        "multilayer": False,
-        "extensions": ["json", "geojson"],
-        "default_extension": "geojson",
-    },
-    "GeoJSONSeq": {
-        "multilayer": False,
-        "extensions": ["geojsonl", "geojsons"],
-        "default_extension": "geojsonl",
-    },
-    "GPKG": {
-        "multilayer": True,
-        "extensions": ["gpkg"],
-        "default_extension": "gpkg",
-    },
-    "GML": {
-        "multilayer": False,
-        "extensions": ["gml", "xml"],
-        "default_extension": "gml",
-    },
-    "OGR_GMT": {
-        "multilayer": False,
-        "extensions": ["gmt"],
-        "default_extension": "gmt",
-    },
-    "SQLite": {
-        "multilayer": True,
-        "extensions": ["sqlite", "db"],
-        "default_extension": "sqlite",
-    },
-}
-
-
-def _detect_driver(path: Path):
-    """
-    Attempt to auto-detect driver based on the extension
-    """
-    extension = path.suffix.lower().removeprefix(".")
-
-    if not extension:
-        return None
-
-    for driver, driver_info in SUPPORTED_DRIVERS.items():
-        driver_extensions = driver_info["extensions"]
-
-        if extension in driver_extensions:
-            return driver
-
-    return None
-
-
-VALID_FEATURES = [
-    "boundary",
-    "runways",
-    "startup_locations",
-    "windsocks",
-    "signs",
-    "pavements",
-    "linear_features",
-]
 
 
 class ParsedAirport:
@@ -249,13 +170,13 @@ class ParsedAirport:
             output_path (str, Path): File path for the output.
                 Note that with some drivers (like GeoJSON) multiple files will be generated (one per feature).
             driver (str): OGR driver (file format) to use for the output.
-                See `xplane_apt_convert.base.SUPPORTED_DRIVERS.keys()` for a list of valid options.
+                See `xplane_apt_convert.drivers.SUPPORTED_DRIVERS.keys()` for a list of valid options.
                 If `None`, then the driver will be automatically inferred from the file extension in `output_path`.
                 Default `None`.
             crs (str): Coordinate reference system (CRS) to use for the output.
                 Default "EPSG:4326".
             features (list[str]): List of feature layers to include in the output.
-                See `xplane_apt_convert.base.VALID_FEATURES` for a list of valid options.
+                See `xplane_apt_convert.drivers.VALID_FEATURES` for a list of valid options.
                 Default is all.
         """
         if driver is not None and driver not in SUPPORTED_DRIVERS:
